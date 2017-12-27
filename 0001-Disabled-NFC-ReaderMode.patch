@@ -1,0 +1,51 @@
+From 664d0fa0ebfedaf8989a16857020a5a5713a571d Mon Sep 17 00:00:00 2001
+From: HyungJu Sung <olnymarket@gmail.com>
+Date: Wed, 27 Dec 2017 15:20:38 +0900
+Subject: [PATCH] Disabled NFC ReaderMode
+
+Change-Id: I0a38d55bf986fccd1c1afea6e3fe00a49d425cde
+---
+ core/java/android/nfc/NfcActivityManager.java | 8 ++++----
+ core/java/android/nfc/NfcAdapter.java         | 3 ++-
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/core/java/android/nfc/NfcActivityManager.java b/core/java/android/nfc/NfcActivityManager.java
+index c7d4c65..dd17af6 100644
+--- a/core/java/android/nfc/NfcActivityManager.java
++++ b/core/java/android/nfc/NfcActivityManager.java
+@@ -207,14 +207,14 @@ public final class NfcActivityManager extends IAppCallback.Stub
+         Binder token;
+         synchronized (NfcActivityManager.this) {
+             NfcActivityState state = getActivityState(activity);
+-            state.readerCallback = callback;
+-            state.readerModeFlags = flags;
+-            state.readerModeExtras = extras;
++            state.readerCallback = null;
++            state.readerModeFlags = 0;
++            state.readerModeExtras = null;
+             token = state.token;
+             isResumed = state.resumed;
+         }
+         if (isResumed) {
+-            setReaderMode(token, flags, extras);
++            setReaderMode(token, 0, null); //Changed content of method, enableReaderMode to disable one.
+         }
+     }
+ 
+diff --git a/core/java/android/nfc/NfcAdapter.java b/core/java/android/nfc/NfcAdapter.java
+index 48869c7..4508b7d 100644
+--- a/core/java/android/nfc/NfcAdapter.java
++++ b/core/java/android/nfc/NfcAdapter.java
+@@ -1393,7 +1393,8 @@ public final class NfcAdapter {
+                 throw new UnsupportedOperationException();
+             }
+         }
+-        mNfcActivityManager.enableReaderMode(activity, callback, flags, extras);
++        mNfcActivityManager.enableReaderMode(activity, callback, flags, extras); //Changed content of method, enableReaderMode to disable one.
++        //Checkout NfcActivityManager. :217
+     }
+ 
+     /**
+-- 
+2.7.4
+
